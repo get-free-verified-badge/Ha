@@ -2,28 +2,55 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Video Player</title>
+  <title>Responsive Video Player</title>
   <style>
     body {
       margin: 0;
-      height: 100vh;
       background-color: black;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
     }
+
     video {
-      width: 90%;
-      height: auto;
-      max-height: 90vh;
       border-radius: 12px;
+      background: #000;
+    }
+
+    /* 🔹 Laptop / Desktop view */
+    @media (min-width: 768px) {
+      video {
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+      }
+    }
+
+    /* 🔹 Mobile view */
+    @media (max-width: 767px) {
+      video {
+        width: 90%;
+        height: auto;
+        max-height: 90vh;
+      }
     }
   </style>
 </head>
 <body>
-  <video controls autoplay muted>
+  <video id="myVideo" controls playsinline>
     <source src="english (1).mp4" type="video/mp4">
     Your browser does not support the video tag.
   </video>
+
+  <script>
+    // 📱 On mobile, auto-play after user gesture (sound allowed)
+    document.addEventListener('click', function () {
+      const video = document.getElementById('myVideo');
+      if (video.paused) {
+        video.play().catch(err => console.log(err));
+      }
+    });
+  </script>
 </body>
 </html>
