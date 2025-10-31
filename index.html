@@ -18,7 +18,7 @@
       background: #000;
     }
 
-    /* 🔹 Laptop / Desktop view */
+    /* 🔹 Desktop / Laptop view */
     @media (min-width: 768px) {
       video {
         width: 100vw;
@@ -33,6 +33,7 @@
         width: 90%;
         height: auto;
         max-height: 90vh;
+        object-fit: contain;
       }
     }
   </style>
@@ -44,11 +45,11 @@
   </video>
 
   <script>
-    // 📱 On mobile, auto-play after user gesture (sound allowed)
+    // 🎧 Auto play when user taps anywhere (mobile browsers block sound autoplay)
     document.addEventListener('click', function () {
       const video = document.getElementById('myVideo');
       if (video.paused) {
-        video.play().catch(err => console.log(err));
+        video.play().catch(() => {});
       }
     });
   </script>
