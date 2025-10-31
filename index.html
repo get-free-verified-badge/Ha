@@ -1,57 +1,133 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="ur">
 <head>
-  <meta charset="UTF-8">
-  <title>Responsive Video Player</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Centered Responsive Video</title>
   <style>
-    body {
-      margin: 0;
-      background-color: black;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    /* Full-screen container */
+    html,body{
+      height:100%;
+      margin:0;
+      background:#000; /* dark background so video looks centered */
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
     }
 
-    video {
-      border-radius: 12px;
-      background: #000;
+    .video-wrap{
+      display:flex;
+      align-items:center;            /* vertical center */
+      justify-content:center;        /* horizontal center */
+      height:100vh;                  /* full viewport height */
+      width:100%;
+      box-sizing:border-box;
+      padding:1rem;
     }
 
-    /* 🔹 Desktop / Laptop view */
-    @media (min-width: 768px) {
-      video {
-        width: 100vw;
-        height: 100vh;
-        object-fit: cover;
+    /* Responsive video box with preserved aspect ratio */
+    .video-box{
+      max-width:1200px;   /* desktop max width */
+      width:100%;
+      aspect-ratio:16/9;  /* keeps 16:9 ratio; change if needed */
+      background:#111;
+      border-radius:8px;
+      overflow:hidden;
+      box-shadow:0 8px 30px rgba(0,0,0,0.6);
+    }
+
+    video{
+      width:100%;
+      height:100%;
+      object-fit:cover;      /* fill box while keeping aspect */
+      display:block;
+      background:#000;
+    }
+
+    /* Mobile tweaks */
+    @media (max-width:600px){
+      .video-box{
+        border-radius:0;
+        height:calc(100vh - 0px); /* let it fill vertically on small screens */
+        aspect-ratio:unset;       /* allow filling */
       }
     }
 
-    /* 🔹 Mobile view */
-    @media (max-width: 767px) {
-      video {
-        width: 90%;
-        height: auto;
-        max-height: 90vh;
-        object-fit: contain;
-      }
+    /* Optional: small play button overlay when autoplay blocked */
+    .play-overlay{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      z-index:5;
+      font-size:1.8rem;
+      background:rgba(0,0,0,0.45);
+      color:#fff;
+      padding:0.6rem 1rem;
+      border-radius:999px;
+      cursor:pointer;
+      display:none;
     }
+    .video-container{ position:relative; height:100%; }
   </style>
 </head>
 <body>
-  <video id="myVideo" controls playsinline>
-    <source src="english (1).mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
+  <div class="video-wrap">
+    <div class="video-box">
+      <div class="video-container">
+        <!-- Replace "video.mp4" with your filename or URL -->
+        <video id="myVideo"
+               playsinline      <!-- important for mobile inline playback -->
+               webkit-playsinline
+               controls         <!-- show controls -->
+               preload="metadata"
+               poster="poster.jpg"> <!-- optional poster image -->
+          <source src="video.mp4" type="video/mp4">
+          Your browser does not support HTML5 video.
+        </video>
+
+        <div id="playOverlay" class="play-overlay">Play</div>
+      </div>
+    </div>
+  </div>
 
   <script>
-    // 🎧 Auto play when user taps anywhere (mobile browsers block sound autoplay)
-    document.addEventListener('click', function () {
-      const video = document.getElementById('myVideo');
-      if (video.paused) {
-        video.play().catch(() => {});
+    const v = document.getElementById('myVideo');
+    const overlay = document.getElementById('playOverlay');
+
+    /* Try autoplay (muted) first — many mobile browsers block autoplay with sound */
+    async function tryAutoplay(){
+      try {
+        v.muted = true;        // muted autoplay is allowed on most browsers
+        v.loop = true;         // optional: loop
+        await v.play();
+        // if autoplay succeeds and you want sound later, you can unmute on first user interaction
+      } catch (err) {
+        // autoplay failed (likely because sound / policy). Show overlay to prompt user.
+        overlay.style.display = 'block';
+      }
+    }
+
+    // If user clicks overlay, unmute and play with sound
+    overlay.addEventListener('click', async () => {
+      overlay.style.display = 'none';
+      try {
+        v.muted = false;
+        await v.play();
+      } catch(e){
+        // fallback: still try play muted
+        v.muted = true;
+        v.play().catch(()=>{});
       }
     });
+
+    // Also enable tapping the video area itself to toggle play/pause (useful on mobile)
+    v.addEventListener('click', () => {
+      if (v.paused) v.play().catch(()=>{});
+      else v.pause();
+    });
+
+    // Start attempt on load
+    window.addEventListener('load', tryAutoplay);
   </script>
 </body>
 </html>
