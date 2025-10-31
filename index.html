@@ -2,54 +2,35 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Video Player</title>
+  <title>Responsive Full Width Video</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       margin: 0;
-      height: 100vh;
       background-color: black;
+      height: 100vh;
       display: flex;
       justify-content: center;
-      align-items: flex-start; /* 👈 video thoda upar */
-      padding-top: 10vh;       /* 👈 kitna upar dikhana hai (adjust kar sakte ho) */
+      align-items: center;
+      overflow: hidden;
     }
 
     video {
-      width: 90%;
-      height: auto;
-      max-height: 80vh; /* thoda chhota to maintain margin */
-      border-radius: 12px;
+      width: 100vw;          /* 👈 full width */
+      height: auto;          /* maintain aspect ratio */
+      max-height: 100vh;     /* don’t go taller than screen */
+      border-radius: 0;      /* full edge-to-edge */
       background: #000;
       display: block;
+      object-fit: contain;   /* 👈 show full video (no crop) */
     }
   </style>
 </head>
 <body>
-  <!-- ✅ Muted autoplay + loop + inline support -->
-  <video id="myVideo" autoplay muted loop playsinline webkit-playsinline controls>
+  <!-- ✅ Muted autoplay + loop + playsinline -->
+  <video autoplay muted loop playsinline webkit-playsinline controls>
     <source src="detailed_video.mp4" type="video/mp4">
     Your browser does not support the video tag.
   </video>
-
-  <script>
-    const video = document.getElementById('myVideo');
-
-    // ✅ Force autoplay muted — for browsers that block it by default
-    window.addEventListener('load', async () => {
-      try {
-        await video.play();
-      } catch (err) {
-        console.log('Autoplay blocked, waiting for user interaction...');
-      }
-    });
-
-    // 📱 If autoplay is blocked (especially on mobile), play on first tap
-    document.addEventListener('click', () => {
-      if (video.paused) {
-        video.play().catch(e => console.log('Play failed:', e));
-      }
-    });
-  </script>
 </body>
 </html>
