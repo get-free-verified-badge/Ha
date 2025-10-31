@@ -3,9 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <title>Video Player</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background-color: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    video {
+      width: 90%;
+      height: auto;
+      max-height: 90vh;
+      border-radius: 12px;
+    }
+  </style>
 </head>
-<body style="margin:0; background:#000;">
-  <video controls autoplay width="100%">
+<body>
+  <video controls autoplay muted>
     <source src="english (1).mp4" type="video/mp4">
     Your browser does not support the video tag.
   </video>
